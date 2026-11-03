@@ -47,3 +47,27 @@ export async function createBorrow(req, res) {
     throw err.code === 11000 ? alreadyBorrowedError() : err;
   }
 }
+
+export async function listMyBorrows(req, res) {
+  const { borrows } = await getCollections();
+  const myBorrows = await borrows
+    .find({ userEmail: req.user.email })
+    .sort({ borrowDate: -1, _id: -1 })
+    .toArray();
+  res.json(myBorrows);
+}
+
+export async function returnBorrow(req, res) {
+  const { books, borrows } = await getCollections();
+  const borrowId = toObjectId(req.params.id, "borrow id");
+
+  const borrow = await borrows.findOneAndDelete({ _id: borrowId, userEmail: req.user.email });
+  if (!borrow) throw createError(404, "Borrow record not found");
+
+  await books.updateOne(
+    { _id: borrow.bookId, $expr: { $lt: ["$availableCopies", "$totalCopies"] } },
+    { $inc: { availableCopies: 1 } },
+  );
+
+  res.json({ message: `"${borrow.bookTitle}" returned`, bookId: borrow.bookId });
+}
