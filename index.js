@@ -33,7 +33,15 @@ app.use(errorHandler);
 
 // Vercel runs the exported app as a serverless function, so only listen locally.
 if (!env.isVercel) {
-  app.listen(env.port, () => {
+  app.listen(env.port, (error) => {
+    if (error) {
+      const reason =
+        error.code === "EADDRINUSE"
+          ? `Port ${env.port} is already in use. Stop the other server or set a different PORT in .env.`
+          : error.message;
+      console.error(`BookNook server could not start: ${reason}`);
+      process.exit(1);
+    }
     console.log(`BookNook server listening on http://localhost:${env.port}`);
     connectDB().catch((err) => console.error("MongoDB connection failed:", err.message));
   });
