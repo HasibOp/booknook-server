@@ -3,6 +3,7 @@ import cors from "cors";
 import { env } from "./src/config/env.js";
 import { connectDB } from "./src/config/db.js";
 import { notFound, errorHandler } from "./src/middleware/errorHandler.js";
+import booksRouter from "./src/routes/books.routes.js";
 
 const app = express();
 
@@ -21,6 +22,8 @@ app.use(async (req, res, next) => {
   await connectDB();
   next();
 });
+
+app.use("/books", booksRouter);
 
 // Unknown routes and all errors answer with JSON { message }. Keep these last.
 app.use(notFound);
