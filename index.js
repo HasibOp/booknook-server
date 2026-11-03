@@ -4,6 +4,7 @@ import { env } from "./src/config/env.js";
 import { connectDB } from "./src/config/db.js";
 import { notFound, errorHandler } from "./src/middleware/errorHandler.js";
 import booksRouter from "./src/routes/books.routes.js";
+import borrowsRouter from "./src/routes/borrows.routes.js";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(async (req, res, next) => {
 });
 
 app.use("/books", booksRouter);
+app.use("/borrows", borrowsRouter);
 
 // Unknown routes and all errors answer with JSON { message }. Keep these last.
 app.use(notFound);
