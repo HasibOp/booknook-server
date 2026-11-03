@@ -17,16 +17,16 @@ The REST API behind **BookNook**, a small online library where readers add books
 
 ## API routes
 
-| Method | Route | Auth | What it does |
-| --- | --- | --- | --- |
-| GET | `/books` | Public (`?mine=true` needs a token) | All books, newest first. Supports `category`, `search` (title or author), `limit` and `mine=true` |
-| GET | `/books/:id` | Token | One book |
-| POST | `/books` | Token | Add a book. `addedBy` comes from the token, and available copies start at the total |
-| PATCH | `/books/:id` | Token (owner) | Update a book; available copies are recalculated |
-| DELETE | `/books/:id` | Token (owner) | Delete a book and its borrow records |
-| POST | `/borrows` | Token | Borrow a book for 7 days (body: `{ "bookId": "..." }`) |
-| GET | `/borrows` | Token | The logged-in reader's borrows, newest first |
-| DELETE | `/borrows/:id` | Token (borrower) | Return a book; its copy goes back on the shelf |
+| Method | Route          | Auth                                | What it does                                                                                      |
+| ------ | -------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------- |
+| GET    | `/books`       | Public (`?mine=true` needs a token) | All books, newest first. Supports `category`, `search` (title or author), `limit` and `mine=true` |
+| GET    | `/books/:id`   | Token                               | One book                                                                                          |
+| POST   | `/books`       | Token                               | Add a book. `addedBy` comes from the token, and available copies start at the total               |
+| PATCH  | `/books/:id`   | Token (owner)                       | Update a book; available copies are recalculated                                                  |
+| DELETE | `/books/:id`   | Token (owner)                       | Delete a book and its borrow records                                                              |
+| POST   | `/borrows`     | Token                               | Borrow a book for 7 days (body: `{ "bookId": "..." }`)                                            |
+| GET    | `/borrows`     | Token                               | The logged-in reader's borrows, newest first                                                      |
+| DELETE | `/borrows/:id` | Token (borrower)                    | Return a book; its copy goes back on the shelf                                                    |
 
 Send the token as `Authorization: Bearer <jwt>`.
 
@@ -51,12 +51,12 @@ The server starts on http://localhost:5000. To fill an empty database with 15 sa
 
 ### Environment variables
 
-| Name | Example | Notes |
-| --- | --- | --- |
-| `PORT` | `5000` | Local only |
-| `MONGODB_URI` | `mongodb+srv://...` | The same database the client uses |
-| `DB_NAME` | `booknook` | |
-| `CLIENT_URL` | `http://localhost:3000` | The client's URL, with no trailing slash. Used for CORS and JWT checks, and must match the client's `BETTER_AUTH_URL` |
+| Name          | Example                 | Notes                                                                                                                 |
+| ------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `PORT`        | `5000`                  | Local only                                                                                                            |
+| `MONGODB_URI` | `mongodb+srv://...`     | The same database the client uses                                                                                     |
+| `DB_NAME`     | `booknook`              |                                                                                                                       |
+| `CLIENT_URL`  | `http://localhost:3000` | The client's URL, with no trailing slash. Used for CORS and JWT checks, and must match the client's `BETTER_AUTH_URL` |
 
 ## Deploy on Vercel
 
