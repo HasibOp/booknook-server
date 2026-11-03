@@ -1,6 +1,8 @@
 import { getCollections } from "../config/db.js";
 import { CATEGORIES, MAX_LIST_LIMIT } from "../config/constants.js";
 import { createError } from "../utils/httpError.js";
+import { toObjectId } from "../utils/objectId.js";
+import { validateBook } from "../utils/validateBook.js";
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -39,4 +41,31 @@ export async function listBooks(req, res) {
   }
 
   res.json(await cursor.toArray());
+}
+
+// GET /books/:id
+export async function getBook(req, res) {
+  const { books } = await getCollections();
+  const book = await books.findOne({ _id: toObjectId(req.params.id, "book id") });
+  if (!book) throw createError(404, "Book not found");
+  res.json(book);
+}
+
+// POST /books
+export async function createBook(req, res) {
+  const { books } = await getCollections();
+  const data = validateBook(req.body);
+  const now = new Date();
+
+  const book = {
+    ...data,
+    availableCopies: data.totalCopies,
+    // who added it always comes from the verified token, never from the form
+    addedBy: { name: req.user.name || req.user.email, email: req.user.email },
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  const { insertedId } = await books.insertOne(book);
+  res.status(201).json({ ...book, _id: insertedId });
 }
