@@ -11,5 +11,5 @@ export const env = {
   dbName: process.env.DB_NAME || "booknook",
   clientUrl: trimSlash(process.env.CLIENT_URL || "http://localhost:3000"),
   isVercel: Boolean(process.env.VERCEL),
-  isProduction: process.env.NODE_ENV === "production",
+  isProduction: process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL),
 };
