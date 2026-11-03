@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { env } from "./src/config/env.js";
 import { connectDB } from "./src/config/db.js";
+import { notFound, errorHandler } from "./src/middleware/errorHandler.js";
 
 const app = express();
 
@@ -20,6 +21,10 @@ app.use(async (req, res, next) => {
   await connectDB();
   next();
 });
+
+// Unknown routes and all errors answer with JSON { message }. Keep these last.
+app.use(notFound);
+app.use(errorHandler);
 
 // Vercel runs the exported app as a serverless function, so only listen locally.
 if (!env.isVercel) {
