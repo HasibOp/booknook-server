@@ -69,3 +69,54 @@ export async function createBook(req, res) {
   const { insertedId } = await books.insertOne(book);
   res.status(201).json({ ...book, _id: insertedId });
 }
+
+// Loads a book and makes sure the logged-in user is the one who added it.
+async function findOwnBook(books, id, user) {
+  const book = await books.findOne({ _id: toObjectId(id, "book id") });
+  if (!book) throw createError(404, "Book not found");
+  if (book.addedBy?.email !== user.email) {
+    throw createError(403, "You can only change books you added");
+  }
+  return book;
+}
+
+// PATCH /books/:id
+export async function updateBook(req, res) {
+  const { books } = await getCollections();
+  const book = await findOwnBook(books, req.params.id, req.user);
+  const changes = validateBook(req.body, { partial: true });
+
+  if (changes.totalCopies !== undefined) {
+    const borrowed = book.totalCopies - book.availableCopies;
+    if (changes.totalCopies < borrowed) {
+      throw createError(
+        409,
+        `${borrowed} ${borrowed === 1 ? "copy is" : "copies are"} borrowed right now, so total copies can't be less than ${borrowed}`,
+      );
+    }
+    changes.availableCopies = changes.totalCopies - borrowed;
+  }
+
+  // Matching on availableCopies too means a borrow or return that lands between
+  // our read and this write can't leave the copy counts out of sync.
+  const updated = await books.findOneAndUpdate(
+    { _id: book._id, availableCopies: book.availableCopies },
+    { $set: { ...changes, updatedAt: new Date() } },
+    { returnDocument: "after" },
+  );
+  if (!updated) throw createError(409, "This book was just borrowed or returned. Please try again.");
+
+  res.json(updated);
+}
+
+// DELETE /books/:id
+export async function deleteBook(req, res) {
+  const { books, borrows } = await getCollections();
+  const book = await findOwnBook(books, req.params.id, req.user);
+
+  await books.deleteOne({ _id: book._id });
+  // nobody can return a book that no longer exists, so clear its borrows too
+  await borrows.deleteMany({ bookId: book._id });
+
+  res.json({ message: "Book deleted", deletedId: book._id });
+}
