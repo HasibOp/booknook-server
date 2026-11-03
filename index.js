@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { env } from "./src/config/env.js";
+import { connectDB } from "./src/config/db.js";
 
 const app = express();
 
@@ -13,10 +14,18 @@ app.get("/", (req, res) => {
   res.json({ message: "BookNook server is running" });
 });
 
+// Every API route below needs the database. The connection is made once and
+// reused, which also covers serverless cold starts on Vercel.
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
 // Vercel runs the exported app as a serverless function, so only listen locally.
 if (!env.isVercel) {
   app.listen(env.port, () => {
     console.log(`BookNook server listening on http://localhost:${env.port}`);
+    connectDB().catch((err) => console.error("MongoDB connection failed:", err.message));
   });
 }
 
