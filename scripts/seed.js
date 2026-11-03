@@ -1,14 +1,13 @@
 import { connectDB } from "../src/config/db.js";
 
 const TEAM = { name: "BookNook Team", email: "team@booknook.app" };
-const cover = (isbn) => `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`;
 
 const SEED_BOOKS = [
   {
     title: "To Kill a Mockingbird",
     author: "Harper Lee",
     category: "Fiction",
-    isbn: "9780061120084",
+    image: "https://i.ibb.co/QjK0G7Zx/booknook-to-kill-a-mockingbird.jpg",
     totalCopies: 4,
     description:
       "In a sleepy Alabama town, young Scout Finch watches her father defend a Black man accused of a crime he did not commit, and learns what courage really looks like.",
@@ -17,7 +16,7 @@ const SEED_BOOKS = [
     title: "Pride and Prejudice",
     author: "Jane Austen",
     category: "Fiction",
-    isbn: "9780141439518",
+    image: "https://i.ibb.co/fzLZgm3L/booknook-pride-and-prejudice.jpg",
     totalCopies: 3,
     description:
       "Elizabeth Bennet trades sharp words with the proud Mr. Darcy in a witty story about first impressions, family pressure and changing your mind.",
@@ -26,7 +25,7 @@ const SEED_BOOKS = [
     title: "The Great Gatsby",
     author: "F. Scott Fitzgerald",
     category: "Fiction",
-    isbn: "9780743273565",
+    image: "https://i.ibb.co/yckR8yGq/booknook-the-great-gatsby.jpg",
     totalCopies: 2,
     description:
       "Through the eyes of Nick Carraway, meet the mysterious Jay Gatsby and his lavish parties on Long Island, all built around one impossible dream.",
@@ -35,7 +34,7 @@ const SEED_BOOKS = [
     title: "A Brief History of Time",
     author: "Stephen Hawking",
     category: "Science",
-    isbn: "9780553380163",
+    image: "https://i.ibb.co/zWCW6pJr/booknook-a-brief-history-of-time.jpg",
     totalCopies: 3,
     description:
       "From the Big Bang to black holes, Stephen Hawking explains the biggest questions about space and time in plain language anyone can follow.",
@@ -44,7 +43,7 @@ const SEED_BOOKS = [
     title: "The Selfish Gene",
     author: "Richard Dawkins",
     category: "Science",
-    isbn: "9780198788607",
+    image: "https://i.ibb.co/HpYmjt3V/booknook-the-selfish-gene.jpg",
     totalCopies: 2,
     description:
       "A classic look at evolution from the gene's point of view, showing how cooperation and even kindness can grow out of natural selection.",
@@ -53,7 +52,7 @@ const SEED_BOOKS = [
     title: "Silent Spring",
     author: "Rachel Carson",
     category: "Science",
-    isbn: "9780618249060",
+    image: "https://i.ibb.co/DmFJcJp/booknook-silent-spring.jpg",
     totalCopies: 2,
     description:
       "The book that started the modern environmental movement, revealing how careless pesticide use was poisoning birds, rivers and people.",
@@ -62,7 +61,7 @@ const SEED_BOOKS = [
     title: "Sapiens: A Brief History of Humankind",
     author: "Yuval Noah Harari",
     category: "History",
-    isbn: "9780099590088",
+    image: "https://i.ibb.co/zHRP0ySq/booknook-sapiens-a-brief-history-of-humankind.jpg",
     totalCopies: 4,
     description:
       "How did one species of ape come to rule the planet? A fast-paced journey through 70,000 years of human history, from foragers to the digital age.",
@@ -71,7 +70,7 @@ const SEED_BOOKS = [
     title: "The Diary of a Young Girl",
     author: "Anne Frank",
     category: "History",
-    isbn: "9780553296983",
+    image: "https://i.ibb.co/MDXCbN5T/booknook-the-diary-of-a-young-girl.jpg",
     totalCopies: 3,
     description:
       "The diary Anne Frank kept while hiding from the Nazis in Amsterdam, full of hope, humor and honesty from a girl who wanted to be a writer.",
@@ -80,7 +79,7 @@ const SEED_BOOKS = [
     title: "The Wright Brothers",
     author: "David McCullough",
     category: "History",
-    isbn: "9781476728742",
+    image: "https://i.ibb.co/zH88sQN0/booknook-the-wright-brothers.jpg",
     totalCopies: 2,
     description:
       "The true story of two bicycle makers from Ohio who taught themselves to fly and changed the world at Kitty Hawk in 1903.",
@@ -89,7 +88,7 @@ const SEED_BOOKS = [
     title: "Matilda",
     author: "Roald Dahl",
     category: "Kids",
-    isbn: "9780142410370",
+    image: "https://i.ibb.co/p66gbyD6/booknook-matilda.jpg",
     totalCopies: 5,
     description:
       "Matilda loves books, has a brilliant mind and discovers a secret power, just in time to stand up to the terrifying headmistress Miss Trunchbull.",
@@ -98,7 +97,7 @@ const SEED_BOOKS = [
     title: "Charlotte's Web",
     author: "E. B. White",
     category: "Kids",
-    isbn: "9780064400558",
+    image: "https://i.ibb.co/vxzQhdCF/booknook-charlotte-s-web.jpg",
     totalCopies: 4,
     description:
       "A gentle tale of friendship between Wilbur the pig and Charlotte, the clever spider who spins words into her web to save his life.",
@@ -107,7 +106,7 @@ const SEED_BOOKS = [
     title: "The Little Prince",
     author: "Antoine de Saint-Exupéry",
     category: "Kids",
-    isbn: "9780156012195",
+    image: "https://i.ibb.co/qLMMMDtg/booknook-the-little-prince.jpg",
     totalCopies: 3,
     description:
       "A pilot stranded in the desert meets a little prince from a tiny planet, and learns what matters most is invisible to the eye.",
@@ -116,7 +115,7 @@ const SEED_BOOKS = [
     title: "Atomic Habits",
     author: "James Clear",
     category: "Others",
-    isbn: "9781847941831",
+    image: "https://i.ibb.co/n8gZbt31/booknook-atomic-habits.jpg",
     totalCopies: 4,
     description:
       "A practical guide to building good habits and breaking bad ones through small, one percent improvements that add up over time.",
@@ -125,7 +124,7 @@ const SEED_BOOKS = [
     title: "Thinking, Fast and Slow",
     author: "Daniel Kahneman",
     category: "Others",
-    isbn: "9780374533557",
+    image: "https://i.ibb.co/VYsv6FYx/booknook-thinking-fast-and-slow.jpg",
     totalCopies: 2,
     description:
       "A Nobel Prize winner explains the two systems that drive the way we think, and why our quick judgments so often lead us astray.",
@@ -134,7 +133,7 @@ const SEED_BOOKS = [
     title: "Quiet",
     author: "Susan Cain",
     category: "Others",
-    isbn: "9780307352156",
+    image: "https://i.ibb.co/spBdHxyF/booknook-quiet.jpg",
     totalCopies: 2,
     description:
       "An eye-opening look at introverts and the quiet strengths they bring to work, school and relationships in a world that rewards talking.",
@@ -162,11 +161,10 @@ async function seed() {
   }
 
   const now = Date.now();
-  const docs = SEED_BOOKS.map(({ isbn, ...book }, index) => {
+  const docs = SEED_BOOKS.map((book, index) => {
     const addedAt = new Date(now - (SEED_BOOKS.length - index) * 60 * 60 * 1000);
     return {
       ...book,
-      image: cover(isbn),
       availableCopies: book.totalCopies,
       addedBy: TEAM,
       createdAt: addedAt,
