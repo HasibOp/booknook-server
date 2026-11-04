@@ -6,7 +6,6 @@ import { validateBook } from '../utils/validateBook.js';
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-// GET /books?limit=6&category=Science&search=orwell&mine=true
 export async function listBooks(req, res) {
   const { books } = await getCollections();
   const { category, search, mine, limit } = req.query;
@@ -27,12 +26,10 @@ export async function listBooks(req, res) {
     filter.$or = [{ title: pattern }, { author: pattern }];
   }
 
-  // req.user is set by verifyToken, which the route runs whenever mine=true
   if (mine === 'true') {
     filter['addedBy.email'] = req.user.email;
   }
 
-  // newest first; _id breaks ties so the order is stable
   let cursor = books.find(filter).sort({ createdAt: -1, _id: -1 });
 
   if (limit !== undefined) {
@@ -49,7 +46,6 @@ export async function listBooks(req, res) {
   res.json(await cursor.toArray());
 }
 
-// GET /books/:id
 export async function getBook(req, res) {
   const { books } = await getCollections();
   const book = await books.findOne({
@@ -59,7 +55,6 @@ export async function getBook(req, res) {
   res.json(book);
 }
 
-// POST /books
 export async function createBook(req, res) {
   const { books } = await getCollections();
   const data = validateBook(req.body);
@@ -68,7 +63,6 @@ export async function createBook(req, res) {
   const book = {
     ...data,
     availableCopies: data.totalCopies,
-    // who added it always comes from the verified token, never from the form
     addedBy: { name: req.user.name || req.user.email, email: req.user.email },
     createdAt: now,
     updatedAt: now,
@@ -78,7 +72,6 @@ export async function createBook(req, res) {
   res.status(201).json({ ...book, _id: insertedId });
 }
 
-// Loads a book and makes sure the logged-in user is the one who added it.
 async function findOwnBook(books, id, user) {
   const book = await books.findOne({ _id: toObjectId(id, 'book id') });
   if (!book) throw createError(404, 'Book not found');
@@ -88,7 +81,6 @@ async function findOwnBook(books, id, user) {
   return book;
 }
 
-// PATCH /books/:id
 export async function updateBook(req, res) {
   const { books } = await getCollections();
   const book = await findOwnBook(books, req.params.id, req.user);
@@ -105,8 +97,6 @@ export async function updateBook(req, res) {
     changes.availableCopies = changes.totalCopies - borrowed;
   }
 
-  // Matching on availableCopies too means a borrow or return that lands between
-  // our read and this write can't leave the copy counts out of sync.
   const updated = await books.findOneAndUpdate(
     { _id: book._id, availableCopies: book.availableCopies },
     { $set: { ...changes, updatedAt: new Date() } },
@@ -121,13 +111,11 @@ export async function updateBook(req, res) {
   res.json(updated);
 }
 
-// DELETE /books/:id
 export async function deleteBook(req, res) {
   const { books, borrows } = await getCollections();
   const book = await findOwnBook(books, req.params.id, req.user);
 
   await books.deleteOne({ _id: book._id });
-  // nobody can return a book that no longer exists, so clear its borrows too
   await borrows.deleteMany({ bookId: book._id });
 
   res.json({ message: 'Book deleted', deletedId: book._id });

@@ -1,9 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { env } from '../config/env.js';
 
-// BetterAuth (in the Next.js client) signs the JWTs and publishes its public keys
-// at /api/auth/jwks. jose downloads them once and caches them, refetching only
-// when a token arrives with a key id it hasn't seen.
 const JWKS = createRemoteJWKSet(new URL(`${env.clientUrl}/api/auth/jwks`));
 
 export async function verifyToken(req, res, next) {
@@ -27,8 +24,6 @@ export async function verifyToken(req, res, next) {
     };
     next();
   } catch (err) {
-    // jose errors (bad signature, expired, wrong issuer...) mean the token is bad.
-    // Anything else means we couldn't reach the key set, which isn't the user's fault.
     const isTokenProblem =
       err.code?.startsWith('ERR_JW') && err.code !== 'ERR_JWKS_TIMEOUT';
     if (isTokenProblem) {

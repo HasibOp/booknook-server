@@ -17,9 +17,6 @@ function isHttpUrl(value) {
   }
 }
 
-// Returns only the fields a client may set, cleaned up. Anything else in the
-// body (addedBy, availableCopies, createdAt...) is ignored on purpose.
-// With { partial: true } (PATCH) missing fields are skipped instead of required.
 export function validateBook(body, { partial = false } = {}) {
   const input = body && typeof body === 'object' ? body : {};
   const shouldCheck = (key) => !partial || input[key] !== undefined;

@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 
 dotenv.config({ quiet: true });
 
-// Strip trailing slashes so the URL matches the JWT issuer exactly.
 const trimSlash = (url) => url.replace(/\/+$/, '');
 
 export const env = {

@@ -17,8 +17,6 @@ app.get('/', (req, res) => {
   res.json({ message: 'BookNook server is running' });
 });
 
-// Every API route below needs the database. The connection is made once and
-// reused, which also covers serverless cold starts on Vercel.
 app.use(async (req, res, next) => {
   await connectDB();
   next();
@@ -27,11 +25,9 @@ app.use(async (req, res, next) => {
 app.use('/books', booksRouter);
 app.use('/borrows', borrowsRouter);
 
-// Unknown routes and all errors answer with JSON { message }. Keep these last.
 app.use(notFound);
 app.use(errorHandler);
 
-// Vercel runs the exported app as a serverless function, so only listen locally.
 if (!env.isVercel) {
   app.listen(env.port, (error) => {
     if (error) {
